@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from visualization import preprocess_data, DATA_PATH
 from predictor import predict_accidents
-from model_trainer import train_prophet_model, MODEL_PATH
+from model_trainer import train_prophet_model, save_model, MODEL_PATH
 
 app = FastAPI(title="Traffic Accident Predictor", version="1.0.0")
 
@@ -69,6 +69,7 @@ def predict_endpoint(request: PredictionRequest):
         if not model_path.exists():
             trafficAccidents = preprocess_data(DATA_PATH)
             model = train_prophet_model(trafficAccidents, request.category)
+            save_model(model, request.category)
         
         with open(model_path, 'rb') as f:
             model = pickle.load(f)
